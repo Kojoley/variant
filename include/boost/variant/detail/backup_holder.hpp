@@ -15,6 +15,7 @@
 
 #include <boost/config.hpp>
 #include <boost/assert.hpp>
+#include <cstdlib> // std::abort
 
 namespace boost {
 namespace detail { namespace variant {
@@ -38,7 +39,7 @@ public: // structors
     {
     }
 
-    backup_holder(const backup_holder&);
+    BOOST_NORETURN backup_holder(const backup_holder&);
 
 public: // modifiers
 
@@ -79,8 +80,12 @@ template <typename T>
 backup_holder<T>::backup_holder(const backup_holder&)
     : backup_(0)
 {
+    using namespace std;
+
     // not intended for copy, but do not want to prohibit syntactically
     BOOST_ASSERT(false);
+
+    abort(); // some implementations have no std::abort
 }
 
 template <typename T>
