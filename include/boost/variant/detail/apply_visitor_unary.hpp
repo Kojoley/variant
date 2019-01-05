@@ -70,7 +70,7 @@ inline
     BOOST_VARIANT_AUX_APPLY_VISITOR_NON_CONST_RESULT_TYPE(Visitor)
 apply_visitor(Visitor& visitor, Visitable&& visitable)
 {
-    return ::boost::forward<Visitable>(visitable).apply_visitor(visitor);
+    return static_cast<Visitable&&>(visitable).apply_visitor(visitor);
 }
 #else
 template <typename Visitor, typename Visitable>
@@ -94,7 +94,7 @@ inline
     BOOST_VARIANT_AUX_GENERIC_RESULT_TYPE(typename Visitor::result_type)
 apply_visitor(const Visitor& visitor, Visitable&& visitable)
 {
-    return ::boost::forward<Visitable>(visitable).apply_visitor(visitor);
+    return static_cast<Visitable&&>(visitable).apply_visitor(visitor);
 }
 #else
 template <typename Visitor, typename Visitable>
@@ -146,12 +146,12 @@ struct result_wrapper1
 
     Visitor&& visitor_;
     explicit result_wrapper1(Visitor&& visitor) BOOST_NOEXCEPT
-        : visitor_(::boost::forward<Visitor>(visitor))
+        : visitor_(static_cast<Visitor&&>(visitor))
     {}
 
     template <class T>
     result_type operator()(T&& val) const {
-        return visitor_(::boost::forward<T>(val));
+        return visitor_(static_cast<T&&>(val));
     }
 };
 
@@ -163,8 +163,8 @@ inline decltype(auto) apply_visitor(Visitor&& visitor, Visitable&& visitable,
         boost::detail::variant::has_result_type<Visitor>
     >::type* = 0)
 {
-    boost::detail::variant::result_wrapper1<Visitor, typename remove_reference<Visitable>::type> cpp14_vis(::boost::forward<Visitor>(visitor));
-    return ::boost::forward<Visitable>(visitable).apply_visitor(cpp14_vis);
+    boost::detail::variant::result_wrapper1<Visitor, typename remove_reference<Visitable>::type> cpp14_vis(static_cast<Visitor&&>(visitor));
+    return static_cast<Visitable&&>(visitable).apply_visitor(cpp14_vis);
 }
 
 #endif // !defined(BOOST_NO_CXX14_DECLTYPE_AUTO) && !defined(BOOST_NO_CXX11_DECLTYPE_N3276)

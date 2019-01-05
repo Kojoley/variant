@@ -78,14 +78,14 @@ public: // visitor interfaces
         typename enable_if_c<MoveSemantics && is_same<Value2, Value2>::value, BOOST_VARIANT_AUX_GENERIC_RESULT_TYPE(result_type)>::type
     operator()(Value2&& value2)
     {
-        return visitor_(::boost::move(value1_), ::boost::forward<Value2>(value2));
+        return visitor_(::boost::move(value1_), static_cast<Value2&&>(value2));
     }
 
     template <typename Value2>
         typename disable_if_c<MoveSemantics && is_same<Value2, Value2>::value, BOOST_VARIANT_AUX_GENERIC_RESULT_TYPE(result_type)>::type
     operator()(Value2&& value2)
     {
-        return visitor_(value1_, ::boost::forward<Value2>(value2));
+        return visitor_(value1_, static_cast<Value2&&>(value2));
     }
 
 #else
@@ -210,7 +210,7 @@ apply_visitor( Visitor& visitor, Visitable1&& visitable1, Visitable2&& visitable
           Visitor, Visitable2, ! ::boost::is_lvalue_reference<Visitable2>::value
         > unwrapper(visitor, visitable2);
 
-    return boost::apply_visitor(unwrapper, ::boost::forward<Visitable1>(visitable1));
+    return boost::apply_visitor(unwrapper, static_cast<Visitable1&&>(visitable1));
 }
 
 #else
@@ -248,7 +248,7 @@ apply_visitor( const Visitor& visitor , Visitable1&& visitable1 , Visitable2&& v
           const Visitor, Visitable2, ! ::boost::is_lvalue_reference<Visitable2>::value
         > unwrapper(visitor, visitable2);
 
-    return boost::apply_visitor(unwrapper, ::boost::forward<Visitable1>(visitable1));
+    return boost::apply_visitor(unwrapper, static_cast<Visitable1&&>(visitable1));
 }
 
 #else
@@ -299,13 +299,13 @@ public: // visitor interfaces
     template <typename Value2>
     decltype(auto) operator()(Value2&& value2, typename enable_if_c<MoveSemantics && is_same<Value2, Value2>::value>::type* = 0)
     {
-        return visitor_(::boost::move(value1_), ::boost::forward<Value2>(value2));
+        return visitor_(::boost::move(value1_), static_cast<Value2&&>(value2));
     }
 
     template <typename Value2>
     decltype(auto) operator()(Value2&& value2, typename disable_if_c<MoveSemantics && is_same<Value2, Value2>::value>::type* = 0)
     {
-        return visitor_(value1_, ::boost::forward<Value2>(value2));
+        return visitor_(value1_, static_cast<Value2&&>(value2));
     }
 
 private:
@@ -368,7 +368,7 @@ inline decltype(auto) apply_visitor(Visitor& visitor, Visitable1&& visitable1, V
           Visitor, Visitable2, ! ::boost::is_lvalue_reference<Visitable2>::value
         > unwrapper(visitor, visitable2);
 
-    return boost::apply_visitor(unwrapper, ::boost::forward<Visitable1>(visitable1));
+    return boost::apply_visitor(unwrapper, static_cast<Visitable1&&>(visitable1));
 }
 
 template <typename Visitor, typename Visitable1, typename Visitable2>
@@ -381,7 +381,7 @@ inline decltype(auto) apply_visitor(const Visitor& visitor, Visitable1&& visitab
           const Visitor, Visitable2, ! ::boost::is_lvalue_reference<Visitable2>::value
         > unwrapper(visitor, visitable2);
 
-    return boost::apply_visitor(unwrapper, ::boost::forward<Visitable1>(visitable1));
+    return boost::apply_visitor(unwrapper, static_cast<Visitable1&&>(visitable1));
 }
 
 
