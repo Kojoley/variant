@@ -124,7 +124,7 @@ before_install:
   - cd $BOOST/libs/$BOOST_LIBS_FOLDER/test/
 
 script:
-  - sh -c "../../../b2 -j2 $B2_ARGS"
+  - sh -c "../../../b2 -j2 $B2_ARGS warnings=extra warnings-as-errors=on"
 
 after_success:
   # Copying Coveralls data to a separate folder
